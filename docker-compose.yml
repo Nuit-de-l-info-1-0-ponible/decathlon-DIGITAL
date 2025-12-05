@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+
+  # Backend (FastAPI + ML)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./ml:/app/ml
+      - ./scraper:/app/scraper
+      - ./data:/app/data
+    environment:
+      # Connexion à la BDD externe fournie
+      - POSTGRES_SERVER=10.8.0.1
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=mohamed
+      - POSTGRES_PASSWORD=Azertyuiop@2025
+      - POSTGRES_DB=nuit_info_deca
+      # Construction de l'URL pour SQLAlchemy (si besoin plus tard)
+      - DATABASE_URL=postgresql://mohamed:Azertyuiop%402025@10.8.0.1:5432/nuit_info_deca
+  # Base de données locale supprimée car utilisation d'une BDD externe
+  # db: ...
